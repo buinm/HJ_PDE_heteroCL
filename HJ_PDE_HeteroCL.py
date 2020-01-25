@@ -79,26 +79,41 @@ def HJ_PDE_solver(V_new, V_init, thetas, dx):
     def spa_derivY(i,j,k):
         left_deriv = hcl.scalar(0, "left_deriv")
         right_deriv = hcl.scalar(0, "right_deriv")
-        with hcl.if_(i == 0):
+        with hcl.if_(j == 0):
             left_boundary = hcl.scalar(0, "left_boundary")
-            left_boundary[0] = V_init[i, j, k] + my_abs(V_init[i + 1, j, k] - V_init[i, j, k]) * my_sign(
+            left_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j + 1, k] - V_init[i, j, k]) * my_sign(
                 V_init[i, j, k])
             left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / dx[1]
-            right_deriv[0] = (V_init[i + 1, j, k] - V_init[i, j, k]) / dx[1]
-        with hcl.elif_(i == V_init.shape[0]):
+            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / dx[1]
+        with hcl.elif_(j == V_init.shape[1]):
             right_boundary = hcl.scalar(0, "right_boundary")
-            right_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j, k] - V_init[i - 1, j, k]) * my_sign(
+            right_boundary[0] = V_init[i, j, k] + my_abs(V_init[i, j, k] - V_init[i, j - 1, k]) * my_sign(
                 V_init[i, j, k])
-            left_deriv[0] = (V_init[i, j, k] - V_init[i - 1, j, k]) / dx[1]
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / dx[1]
             right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / dx[1]
-        with hcl.elif_(i != 0 and i != V_init.shape[0]):
-            left_deriv[0] = (V_init[i, j, k] - V_init[i - 1, j, k]) / dx[1]
-            right_deriv[0] = (V_init[i + 1, j, k] - V_init[i, j, k]) / dx[1]
+        with hcl.elif_(j != 0 and j != V_init.shape[1]):
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j - 1, k]) / dx[1]
+            right_deriv[0] = (V_init[i, j + 1, k] - V_init[i, j, k]) / dx[1]
         return left_deriv[0], right_deriv[0]
 
 
     def spa_derivT(i,j,k):
-        return i - j + k, k*j
+        left_deriv = hcl.scalar(0, "left_deriv")
+        right_deriv = hcl.scalar(0, "right_deriv")
+        with hcl.if_(k == 0):
+            left_boundary = hcl.scalar(0, "left_boundary")
+            left_boundary[0] = V_init[i,j,50]
+            left_deriv[0] = (V_init[i, j, k] - left_boundary[0]) / dx[1]
+            right_deriv[0] = (V_init[i, j, k + 1] - V_init[i, j, k]) / dx[1]
+        with hcl.elif_(k == V_init.shape[2]):
+            right_boundary = hcl.scalar(0, "right_boundary")
+            right_boundary[0] = V_init[i,j,0]
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / dx[1]
+            right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / dx[1]
+        with hcl.elif_(j != 0 and j != V_init.shape[2]):
+            left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / dx[1]
+            right_deriv[0] = (V_init[i, j ,k + 1] - V_init[i, j, k]) / dx[1]
+        return left_deriv[0], right_deriv[0]
 
     # Calculate Hamiltonian for every grid point in V_init
     with hcl.Stage("Hamiltonian"):
@@ -120,9 +135,9 @@ def HJ_PDE_solver(V_new, V_init, thetas, dx):
                     dV_dT_R = hcl.scalar(0, "dV_dT_R")
                     dV_dT   = hcl.scalar(0, "dV_dT")
 
-                    dV_dx_L[0], dV_dx_R[0] = spa_derivX(i,j,k)
-                    dV_dy_L[0], dV_dy_R[0] = spa_derivY(i,j,k)
-                    dV_dT_L[0], dV_dT_R[0] = spa_derivTheta(i, j, k)
+                    dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
+                    dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k)
+                    dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k)
 
                     # Calculate average gradient
                     dV_dx[0] = (dV_dx_L + dV_dx_R) / 2
@@ -136,8 +151,8 @@ def HJ_PDE_solver(V_new, V_init, thetas, dx):
                     vel = hcl.scalar(1,"vel")
 
                     # Assume that mode is min
-                    #with hcl.if_(dV_dtheta_C > 0):
-                    #    uOpt.v = -uOpt.v
+                    with hcl.if_(dV_dT > 0):
+                        uOpt.v = -uOpt.v
 
                     # Calculate dynamical changes
                     V_new[i, j, k] =  vel.v * hcl.cos(thetas[k]) * dV_dx[0] + vel.v * hcl.sin(thetas[k]) * dV_dy[0] + uOpt.v * dV_dT[0]
