@@ -1,28 +1,112 @@
+// attr [max_alpha1] storage_scope = "global"
+allocate max_alpha1[float32 * 1]
+produce max_alpha1 {
+  // attr [0] extern_scope = 0
+  max_alpha1[0] = -1000000000.000000f
+}
+// attr [max_alpha2] storage_scope = "global"
+allocate max_alpha2[float32 * 1]
+produce max_alpha2 {
+  // attr [0] extern_scope = 0
+  max_alpha2[0] = -1000000000.000000f
+}
+// attr [max_alpha3] storage_scope = "global"
+allocate max_alpha3[float32 * 1]
+produce max_alpha3 {
+  // attr [0] extern_scope = 0
+  max_alpha3[0] = -1000000000.000000f
+}
+// attr [step_bound] storage_scope = "global"
+allocate step_bound[float32 * 1]
+produce step_bound {
+  // attr [0] extern_scope = 0
+  step_bound[0] = 0.000000f
+}
+// attr [delta_T] storage_scope = "global"
+allocate delta_T[float32 * 1]
+produce delta_T {
+  // attr [0] extern_scope = 0
+  delta_T[0] = 0.000000f
+}
 // attr [Hamiltonian] storage_scope = "global"
 allocate Hamiltonian[float32 * 1]
 produce Hamiltonian {
   // attr [0] extern_scope = 0
+  // attr [dV_dx_L] storage_scope = "global"
+  allocate dV_dx_L[float32 * 1]
+  produce dV_dx_L {
+    // attr [0] extern_scope = 0
+    dV_dx_L[0] = 0.000000f
+  }
+  // attr [dV_dx_R] storage_scope = "global"
+  allocate dV_dx_R[float32 * 1]
+  produce dV_dx_R {
+    // attr [0] extern_scope = 0
+    dV_dx_R[0] = 0.000000f
+  }
+  // attr [dV_dx] storage_scope = "global"
+  allocate dV_dx[float32 * 1]
+  produce dV_dx {
+    // attr [0] extern_scope = 0
+    dV_dx[0] = 0.000000f
+  }
+  // attr [dV_dy_L] storage_scope = "global"
+  allocate dV_dy_L[float32 * 1]
+  produce dV_dy_L {
+    // attr [0] extern_scope = 0
+    dV_dy_L[0] = 0.000000f
+  }
+  // attr [dV_dy_R] storage_scope = "global"
+  allocate dV_dy_R[float32 * 1]
+  produce dV_dy_R {
+    // attr [0] extern_scope = 0
+    dV_dy_R[0] = 0.000000f
+  }
+  // attr [dV_dy] storage_scope = "global"
+  allocate dV_dy[float32 * 1]
+  produce dV_dy {
+    // attr [0] extern_scope = 0
+    dV_dy[0] = 0.000000f
+  }
+  // attr [dV_dT_L] storage_scope = "global"
+  allocate dV_dT_L[float32 * 1]
+  produce dV_dT_L {
+    // attr [0] extern_scope = 0
+    dV_dT_L[0] = 0.000000f
+  }
+  // attr [dV_dT_R] storage_scope = "global"
+  allocate dV_dT_R[float32 * 1]
+  produce dV_dT_R {
+    // attr [0] extern_scope = 0
+    dV_dT_R[0] = 0.000000f
+  }
+  // attr [dV_dT] storage_scope = "global"
+  allocate dV_dT[float32 * 1]
+  produce dV_dT {
+    // attr [0] extern_scope = 0
+    dV_dT[0] = 0.000000f
+  }
+  // attr [dx_dt] storage_scope = "global"
+  allocate dx_dt[float32 * 1]
+  produce dx_dt {
+    // attr [0] extern_scope = 0
+    dx_dt[0] = 0.000000f
+  }
+  // attr [dy_dt] storage_scope = "global"
+  allocate dy_dt[float32 * 1]
+  produce dy_dt {
+    // attr [0] extern_scope = 0
+    dy_dt[0] = 0.000000f
+  }
+  // attr [dtheta_dt] storage_scope = "global"
+  allocate dtheta_dt[float32 * 1]
+  produce dtheta_dt {
+    // attr [0] extern_scope = 0
+    dtheta_dt[0] = 0.000000f
+  }
   for (i, 0, 51) {
     for (j, 0, 51) {
       for (k, 0, 51) {
-        // attr [dV_dx_L] storage_scope = "global"
-        allocate dV_dx_L[float32 * 1]
-        produce dV_dx_L {
-          // attr [0] extern_scope = 0
-          dV_dx_L[0] = 0.000000f
-        }
-        // attr [dV_dx_R] storage_scope = "global"
-        allocate dV_dx_R[float32 * 1]
-        produce dV_dx_R {
-          // attr [0] extern_scope = 0
-          dV_dx_R[0] = 0.000000f
-        }
-        // attr [dV_dx_C] storage_scope = "global"
-        allocate dV_dx_C[float32 * 1]
-        produce dV_dx_C {
-          // attr [0] extern_scope = 0
-          dV_dx_C[0] = 0.000000f
-        }
         // attr [left_deriv] storage_scope = "global"
         allocate left_deriv[float32 * 1]
         produce left_deriv {
@@ -113,7 +197,137 @@ produce Hamiltonian {
         }
         dV_dx_L[0] = left_deriv[0]
         dV_dx_R[0] = right_deriv[0]
-        dV_dx_C[0] = ((dV_dx_L[0] + dV_dx_R[0])*0.500000f)
+        // attr [left_deriv] storage_scope = "global"
+        allocate left_deriv[float32 * 1]
+        produce left_deriv {
+          // attr [0] extern_scope = 0
+          left_deriv[0] = 0.000000f
+        }
+        // attr [right_deriv] storage_scope = "global"
+        allocate right_deriv[float32 * 1]
+        produce right_deriv {
+          // attr [0] extern_scope = 0
+          right_deriv[0] = 0.000000f
+        }
+        if ((j == 0)) {
+          // attr [left_boundary] storage_scope = "global"
+          allocate left_boundary[float32 * 1]
+          produce left_boundary {
+            // attr [0] extern_scope = 0
+            left_boundary[0] = 0.000000f
+          }
+          // attr [abs_value] storage_scope = "global"
+          allocate abs_value[float32 * 1]
+          produce abs_value {
+            // attr [0] extern_scope = 0
+            abs_value[0] = 0.000000f
+          }
+          if ((0.000000f < (V_init[((k + (i*2500)) + 50)] - V_init[(k + (i*2500))]))) {
+            abs_value[0] = (V_init[((k + (i*2500)) + 50)] - V_init[(k + (i*2500))])
+          } else {
+            abs_value[0] = (V_init[(k + (i*2500))] - V_init[((k + (i*2500)) + 50)])
+          }
+          // attr [sign] storage_scope = "global"
+          allocate sign[float32 * 1]
+          produce sign {
+            // attr [0] extern_scope = 0
+            sign[0] = 0.000000f
+          }
+          if ((V_init[(k + (i*2500))] == 0.000000f)) {
+            sign[0] = 0.000000f
+          }
+          if ((0.000000f < V_init[(k + (i*2500))])) {
+            sign[0] = 1.000000f
+          }
+          if ((V_init[(k + (i*2500))] < 0.000000f)) {
+            sign[0] = -1.000000f
+          }
+          left_boundary[0] = (V_init[(k + (i*2500))] + (abs_value[0]*sign[0]))
+          left_deriv[0] = ((V_init[(k + (i*2500))] - left_boundary[0])/dx[1])
+          right_deriv[0] = ((V_init[((k + (i*2500)) + 50)] - V_init[(k + (i*2500))])/dx[1])
+        } else if ((j == 50)) {
+          // attr [right_boundary] storage_scope = "global"
+          allocate right_boundary[float32 * 1]
+          produce right_boundary {
+            // attr [0] extern_scope = 0
+            right_boundary[0] = 0.000000f
+          }
+          // attr [abs_value] storage_scope = "global"
+          allocate abs_value[float32 * 1]
+          produce abs_value {
+            // attr [0] extern_scope = 0
+            abs_value[0] = 0.000000f
+          }
+          if ((0.000000f < (V_init[((k + (i*2500)) + 2500)] - V_init[((k + (i*2500)) + 2450)]))) {
+            abs_value[0] = (V_init[((k + (i*2500)) + 2500)] - V_init[((k + (i*2500)) + 2450)])
+          } else {
+            abs_value[0] = (V_init[((k + (i*2500)) + 2450)] - V_init[((k + (i*2500)) + 2500)])
+          }
+          // attr [sign] storage_scope = "global"
+          allocate sign[float32 * 1]
+          produce sign {
+            // attr [0] extern_scope = 0
+            sign[0] = 0.000000f
+          }
+          if ((V_init[((k + (i*2500)) + 2500)] == 0.000000f)) {
+            sign[0] = 0.000000f
+          }
+          if ((0.000000f < V_init[((k + (i*2500)) + 2500)])) {
+            sign[0] = 1.000000f
+          }
+          if ((V_init[((k + (i*2500)) + 2500)] < 0.000000f)) {
+            sign[0] = -1.000000f
+          }
+          right_boundary[0] = (V_init[((k + (i*2500)) + 2500)] + (abs_value[0]*sign[0]))
+          left_deriv[0] = ((V_init[((k + (i*2500)) + 2500)] - V_init[((k + (i*2500)) + 2450)])/dx[1])
+          right_deriv[0] = ((right_boundary[0] - V_init[((k + (i*2500)) + 2500)])/dx[1])
+        } else if ((j != 50)) {
+          left_deriv[0] = ((V_init[((k + (j*50)) + (i*2500))] - V_init[(((k + (j*50)) + (i*2500)) + -50)])/dx[1])
+          right_deriv[0] = ((V_init[(((k + (j*50)) + (i*2500)) + 50)] - V_init[((k + (j*50)) + (i*2500))])/dx[1])
+        }
+        dV_dy_L[0] = left_deriv[0]
+        dV_dy_R[0] = right_deriv[0]
+        // attr [left_deriv] storage_scope = "global"
+        allocate left_deriv[float32 * 1]
+        produce left_deriv {
+          // attr [0] extern_scope = 0
+          left_deriv[0] = 0.000000f
+        }
+        // attr [right_deriv] storage_scope = "global"
+        allocate right_deriv[float32 * 1]
+        produce right_deriv {
+          // attr [0] extern_scope = 0
+          right_deriv[0] = 0.000000f
+        }
+        if ((k == 0)) {
+          // attr [left_boundary] storage_scope = "global"
+          allocate left_boundary[float32 * 1]
+          produce left_boundary {
+            // attr [0] extern_scope = 0
+            left_boundary[0] = 0.000000f
+          }
+          left_boundary[0] = V_init[(((j + (i*50))*50) + 50)]
+          left_deriv[0] = ((V_init[((j + (i*50))*50)] - left_boundary[0])/dx[1])
+          right_deriv[0] = ((V_init[(((j + (i*50))*50) + 1)] - V_init[((j + (i*50))*50)])/dx[1])
+        } else if ((k == 50)) {
+          // attr [right_boundary] storage_scope = "global"
+          allocate right_boundary[float32 * 1]
+          produce right_boundary {
+            // attr [0] extern_scope = 0
+            right_boundary[0] = 0.000000f
+          }
+          right_boundary[0] = V_init[((j + (i*50))*50)]
+          left_deriv[0] = ((V_init[(((j + (i*50))*50) + 50)] - V_init[(((j + (i*50))*50) + 49)])/dx[1])
+          right_deriv[0] = ((right_boundary[0] - V_init[(((j + (i*50))*50) + 50)])/dx[1])
+        } else if ((k != 50)) {
+          left_deriv[0] = ((V_init[((k + (j*50)) + (i*2500))] - V_init[(((k + (j*50)) + (i*2500)) + -1)])/dx[1])
+          right_deriv[0] = ((V_init[(((k + (j*50)) + (i*2500)) + 1)] - V_init[((k + (j*50)) + (i*2500))])/dx[1])
+        }
+        dV_dT_L[0] = left_deriv[0]
+        dV_dT_R[0] = right_deriv[0]
+        dV_dx[0] = ((dV_dx_L[0] + dV_dx_R[0])*0.500000f)
+        dV_dy[0] = ((dV_dy_L[0] + dV_dy_R[0])*0.500000f)
+        dV_dT[0] = ((dV_dT_L[0] + dV_dT_R[0])*0.500000f)
         // attr [uOpt] storage_scope = "global"
         allocate uOpt[float32 * 1]
         produce uOpt {
@@ -126,244 +340,57 @@ produce Hamiltonian {
           // attr [0] extern_scope = 0
           vel[0] = 1.000000f
         }
-        V_f[((k + (j*50)) + (i*2500))] = float32(((float64(vel[0])*cos(float64(thetas[k])))*float64(dV_dx_C[0])))
-      }
-    }
-  }
-}
-
-// attr [Hamiltonian] storage_scope = "global"
-allocate Hamiltonian[int32 * 1]
-produce Hamiltonian {
-  // attr [0] extern_scope = 0
-  for (i, 0, 51) {
-    for (j, 0, 51) {
-      for (k, 0, 51) {
-        // attr [dV_dx_L] storage_scope = "global"
-        allocate dV_dx_L[int32 * 1]
-        produce dV_dx_L {
+        if ((0.000000f < dV_dT[0])) {
+          uOpt[0] = (uOpt[0]*-1.000000f)
+        }
+        dx_dt[0] = float32((float64(vel[0])*cos(float64(thetas[k]))))
+        dy_dt[0] = float32((float64(vel[0])*sin(float64(thetas[k]))))
+        dtheta_dt[0] = uOpt[0]
+        V_f[((k + (j*50)) + (i*2500))] = ((((dx_dt[0]*dV_dx[0]) + (dy_dt[0]*dV_dy[0])) + (dtheta_dt[0]*dV_dT[0]))*-1.000000f)
+        // attr [abs_value] storage_scope = "global"
+        allocate abs_value[float32 * 1]
+        produce abs_value {
           // attr [0] extern_scope = 0
-          dV_dx_L[0] = 0
+          abs_value[0] = 0.000000f
         }
-        // attr [dV_dx_R] storage_scope = "global"
-        allocate dV_dx_R[int32 * 1]
-        produce dV_dx_R {
+        if ((0.000000f < dx_dt[0])) {
+          abs_value[0] = dx_dt[0]
+        } else {
+          abs_value[0] = (dx_dt[0]*-1.000000f)
+        }
+        dx_dt[0] = abs_value[0]
+        // attr [abs_value] storage_scope = "global"
+        allocate abs_value[float32 * 1]
+        produce abs_value {
           // attr [0] extern_scope = 0
-          dV_dx_R[0] = 0
+          abs_value[0] = 0.000000f
         }
-        // attr [dV_dx] storage_scope = "global"
-        allocate dV_dx[int32 * 1]
-        produce dV_dx {
+        if ((0.000000f < dy_dt[0])) {
+          abs_value[0] = dy_dt[0]
+        } else {
+          abs_value[0] = (dy_dt[0]*-1.000000f)
+        }
+        dy_dt[0] = abs_value[0]
+        // attr [abs_value] storage_scope = "global"
+        allocate abs_value[float32 * 1]
+        produce abs_value {
           // attr [0] extern_scope = 0
-          dV_dx[0] = 0
+          abs_value[0] = 0.000000f
         }
-        // attr [dV_dy_L] storage_scope = "global"
-        allocate dV_dy_L[int32 * 1]
-        produce dV_dy_L {
+        if ((0.000000f < dtheta_dt[0])) {
+          abs_value[0] = dtheta_dt[0]
+        } else {
+          abs_value[0] = (dtheta_dt[0]*-1.000000f)
+        }
+        dtheta_dt[0] = abs_value[0]
+        // attr [diss] storage_scope = "global"
+        allocate diss[float32 * 1]
+        produce diss {
           // attr [0] extern_scope = 0
-          dV_dy_L[0] = 0
+          diss[0] = 0.000000f
         }
-        // attr [dV_dy_R] storage_scope = "global"
-        allocate dV_dy_R[int32 * 1]
-        produce dV_dy_R {
-          // attr [0] extern_scope = 0
-          dV_dy_R[0] = 0
-        }
-        // attr [dV_dy] storage_scope = "global"
-        allocate dV_dy[int32 * 1]
-        produce dV_dy {
-          // attr [0] extern_scope = 0
-          dV_dy[0] = 0
-        }
-        // attr [left_deriv] storage_scope = "global"
-        allocate left_deriv[int32 * 1]
-        produce left_deriv {
-          // attr [0] extern_scope = 0
-          left_deriv[0] = 0
-        }
-        // attr [right_deriv] storage_scope = "global"
-        allocate right_deriv[int32 * 1]
-        produce right_deriv {
-          // attr [0] extern_scope = 0
-          right_deriv[0] = 0
-        }
-        if ((i == 0)) {
-          // attr [left_boundary] storage_scope = "global"
-          allocate left_boundary[int32 * 1]
-          produce left_boundary {
-            // attr [0] extern_scope = 0
-            left_boundary[0] = 0
-          }
-          // attr [abs_value] storage_scope = "global"
-          allocate abs_value[float32 * 1]
-          produce abs_value {
-            // attr [0] extern_scope = 0
-            abs_value[0] = 0.000000f
-          }
-          if ((0.000000f < (V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))]))) {
-            abs_value[0] = (V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))])
-          } else {
-            abs_value[0] = (V_init[(k + (j*50))] - V_init[((k + (j*50)) + 2500)])
-          }
-          // attr [sign] storage_scope = "global"
-          allocate sign[float32 * 1]
-          produce sign {
-            // attr [0] extern_scope = 0
-            sign[0] = 0.000000f
-          }
-          if ((V_init[(k + (j*50))] == 0.000000f)) {
-            sign[0] = 0.000000f
-          }
-          if ((0.000000f < V_init[(k + (j*50))])) {
-            sign[0] = 1.000000f
-          }
-          if ((V_init[(k + (j*50))] < 0.000000f)) {
-            sign[0] = -1.000000f
-          }
-          left_boundary[0] = int32((V_init[(k + (j*50))] + (abs_value[0]*sign[0])))
-          left_deriv[0] = int32(((V_init[(k + (j*50))] - float32(left_boundary[0]))/dx[1]))
-          right_deriv[0] = int32(((V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))])/dx[1]))
-        } else if ((i == 50)) {
-          // attr [right_boundary] storage_scope = "global"
-          allocate right_boundary[int32 * 1]
-          produce right_boundary {
-            // attr [0] extern_scope = 0
-            right_boundary[0] = 0
-          }
-          // attr [abs_value] storage_scope = "global"
-          allocate abs_value[float32 * 1]
-          produce abs_value {
-            // attr [0] extern_scope = 0
-            abs_value[0] = 0.000000f
-          }
-          if ((0.000000f < (V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)]))) {
-            abs_value[0] = (V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)])
-          } else {
-            abs_value[0] = (V_init[((k + (j*50)) + 122500)] - V_init[((k + (j*50)) + 125000)])
-          }
-          // attr [sign] storage_scope = "global"
-          allocate sign[float32 * 1]
-          produce sign {
-            // attr [0] extern_scope = 0
-            sign[0] = 0.000000f
-          }
-          if ((V_init[((k + (j*50)) + 125000)] == 0.000000f)) {
-            sign[0] = 0.000000f
-          }
-          if ((0.000000f < V_init[((k + (j*50)) + 125000)])) {
-            sign[0] = 1.000000f
-          }
-          if ((V_init[((k + (j*50)) + 125000)] < 0.000000f)) {
-            sign[0] = -1.000000f
-          }
-          right_boundary[0] = int32((V_init[((k + (j*50)) + 125000)] + (abs_value[0]*sign[0])))
-          left_deriv[0] = int32(((V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)])/dx[1]))
-          right_deriv[0] = int32(((float32(right_boundary[0]) - V_init[((k + (j*50)) + 125000)])/dx[1]))
-        } else if ((i != 50)) {
-          left_deriv[0] = int32(((V_init[((k + (j*50)) + (i*2500))] - V_init[(((k + (j*50)) + (i*2500)) + -2500)])/dx[1]))
-          right_deriv[0] = int32(((V_init[(((k + (j*50)) + (i*2500)) + 2500)] - V_init[((k + (j*50)) + (i*2500))])/dx[1]))
-        }
-        // attr [left_deriv] storage_scope = "global"
-        allocate left_deriv[int32 * 1]
-        produce left_deriv {
-          // attr [0] extern_scope = 0
-          left_deriv[0] = 0
-        }
-        // attr [right_deriv] storage_scope = "global"
-        allocate right_deriv[int32 * 1]
-        produce right_deriv {
-          // attr [0] extern_scope = 0
-          right_deriv[0] = 0
-        }
-        if ((i == 0)) {
-          // attr [left_boundary] storage_scope = "global"
-          allocate left_boundary[int32 * 1]
-          produce left_boundary {
-            // attr [0] extern_scope = 0
-            left_boundary[0] = 0
-          }
-          // attr [abs_value] storage_scope = "global"
-          allocate abs_value[float32 * 1]
-          produce abs_value {
-            // attr [0] extern_scope = 0
-            abs_value[0] = 0.000000f
-          }
-          if ((0.000000f < (V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))]))) {
-            abs_value[0] = (V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))])
-          } else {
-            abs_value[0] = (V_init[(k + (j*50))] - V_init[((k + (j*50)) + 2500)])
-          }
-          // attr [sign] storage_scope = "global"
-          allocate sign[float32 * 1]
-          produce sign {
-            // attr [0] extern_scope = 0
-            sign[0] = 0.000000f
-          }
-          if ((V_init[(k + (j*50))] == 0.000000f)) {
-            sign[0] = 0.000000f
-          }
-          if ((0.000000f < V_init[(k + (j*50))])) {
-            sign[0] = 1.000000f
-          }
-          if ((V_init[(k + (j*50))] < 0.000000f)) {
-            sign[0] = -1.000000f
-          }
-          left_boundary[0] = int32((V_init[(k + (j*50))] + (abs_value[0]*sign[0])))
-          left_deriv[0] = int32(((V_init[(k + (j*50))] - float32(left_boundary[0]))/dx[1]))
-          right_deriv[0] = int32(((V_init[((k + (j*50)) + 2500)] - V_init[(k + (j*50))])/dx[1]))
-        } else if ((i == 50)) {
-          // attr [right_boundary] storage_scope = "global"
-          allocate right_boundary[int32 * 1]
-          produce right_boundary {
-            // attr [0] extern_scope = 0
-            right_boundary[0] = 0
-          }
-          // attr [abs_value] storage_scope = "global"
-          allocate abs_value[float32 * 1]
-          produce abs_value {
-            // attr [0] extern_scope = 0
-            abs_value[0] = 0.000000f
-          }
-          if ((0.000000f < (V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)]))) {
-            abs_value[0] = (V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)])
-          } else {
-            abs_value[0] = (V_init[((k + (j*50)) + 122500)] - V_init[((k + (j*50)) + 125000)])
-          }
-          // attr [sign] storage_scope = "global"
-          allocate sign[float32 * 1]
-          produce sign {
-            // attr [0] extern_scope = 0
-            sign[0] = 0.000000f
-          }
-          if ((V_init[((k + (j*50)) + 125000)] == 0.000000f)) {
-            sign[0] = 0.000000f
-          }
-          if ((0.000000f < V_init[((k + (j*50)) + 125000)])) {
-            sign[0] = 1.000000f
-          }
-          if ((V_init[((k + (j*50)) + 125000)] < 0.000000f)) {
-            sign[0] = -1.000000f
-          }
-          right_boundary[0] = int32((V_init[((k + (j*50)) + 125000)] + (abs_value[0]*sign[0])))
-          left_deriv[0] = int32(((V_init[((k + (j*50)) + 125000)] - V_init[((k + (j*50)) + 122500)])/dx[1]))
-          right_deriv[0] = int32(((float32(right_boundary[0]) - V_init[((k + (j*50)) + 125000)])/dx[1]))
-        } else if ((i != 50)) {
-          left_deriv[0] = int32(((V_init[((k + (j*50)) + (i*2500))] - V_init[(((k + (j*50)) + (i*2500)) + -2500)])/dx[1]))
-          right_deriv[0] = int32(((V_init[(((k + (j*50)) + (i*2500)) + 2500)] - V_init[((k + (j*50)) + (i*2500))])/dx[1]))
-        }
-        // attr [uOpt] storage_scope = "global"
-        allocate uOpt[int32 * 1]
-        produce uOpt {
-          // attr [0] extern_scope = 0
-          uOpt[0] = 0
-        }
-        // attr [vel] storage_scope = "global"
-        allocate vel[int32 * 1]
-        produce vel {
-          // attr [0] extern_scope = 0
-          vel[0] = 1
-        }
-        V_f[((k + (j*50)) + (i*2500))] = float32((((float64(vel[0])*cos(float64(thetas[k])))*float64(((int33(left_deriv[0]) + int33(right_deriv[0]))/(int33)2))) + ((float64(vel[0])*sin(float64(thetas[k])))*float64(((int33(left_deriv[0]) + int33(right_deriv[0]))/(int33)2)))))
+        diss[0] = (((((dV_dx_R[0] - dV_dx_L[0])*dx_dt[0]) + ((dV_dy_R[0] - dV_dy_L[0])*dy_dt[0])) + ((dV_dT_R[0] - dV_dT_L[0])*dtheta_dt[0]))*0.500000f)
+        V_f[((k + (j*50)) + (i*2500))] = (diss[0] - V_f[((k + (j*50)) + (i*2500))])
       }
     }
   }

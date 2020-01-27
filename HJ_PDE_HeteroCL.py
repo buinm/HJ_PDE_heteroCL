@@ -3,7 +3,6 @@ import numpy as np
 
 import math
 
-hcl.config.init_dtype = hcl.Float()
 
 class grid:
   def __init__(self, max, min, pts_each_dim, pDim):
@@ -17,27 +16,15 @@ class grid:
 # NOTE: No information about structure of grid, dynamics of system passed in for now
 # Hardcoded these information
 
-# Global variables
-def cleaner_HJ_PDE_solver(V_new, V_init, thetas, dx):
-
-    # Calculate dV_dx
-    dV_dx_L = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivXL(i,j,k), name = "dV_dx_L")
-    dV_dx_R = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivXR(i, j, k), name = "dV_dx_R")
-    dV_dx   = hcl.compute((50, 50, 50), lambda i, j, k: (dV_dx_L[i,j,k] + dV_dx_R[i,j,k])/2, name = "dV_dx")
-
-    # Calculate dV_dy
-    dV_dy_L = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivYL(i, j, k), name = "dV_dy_L")
-    dV_dy_R = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivYR(i, j, k), name = "dV_dy_R")
-    dV_dy   = hcl.compute((50, 50, 50), lambda i, j, k: (dV_dy_L[i,j,k] + dV_dy_R[i,j,k])/2, name = "dV_dy")
-
-    # Calculate dV_dT
-    dV_dT_L = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivTL(i, j, k), name="dV_dT_L")
-    dV_dT_R = hcl.compute((50, 50, 50), lambda i, j, k: spa_derivTR(i, j, k), name="dV_dT_R")
-    dV_dT   = hcl.compute((50, 50, 50), lambda i, j, k: (dV_dy_L[i, j, k] + dV_dy_R[i, j, k]) / 2, name="dV_dT")
-
-
-
 def HJ_PDE_solver(V_new, V_init, thetas, dx):
+    # These variables are used to dissipation calculation
+    max_alpha1 = hcl.scalar(-1e9, "max_alpha1")
+    max_alpha2 = hcl.scalar(-1e9, "max_alpha2")
+    max_alpha3 = hcl.scalar(-1e9, "max_alpha3")
+
+    # Used for calculating time bound
+    step_bound = hcl.scalar(0, "step_bound")
+    delta_T = hcl.scalar(0, "delta_T")
 
     # HeteroC
     def my_abs(my_x):
@@ -110,31 +97,35 @@ def HJ_PDE_solver(V_new, V_init, thetas, dx):
             right_boundary[0] = V_init[i,j,0]
             left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / dx[1]
             right_deriv[0] = (right_boundary[0] - V_init[i, j, k]) / dx[1]
-        with hcl.elif_(j != 0 and j != V_init.shape[2]):
+        with hcl.elif_(k != 0 and k != V_init.shape[2]):
             left_deriv[0] = (V_init[i, j, k] - V_init[i, j, k - 1]) / dx[1]
             right_deriv[0] = (V_init[i, j ,k + 1] - V_init[i, j, k]) / dx[1]
         return left_deriv[0], right_deriv[0]
 
+
+
     # Calculate Hamiltonian for every grid point in V_init
     with hcl.Stage("Hamiltonian"):
+        # Variables to calculate dV_dx
+        dV_dx_L = hcl.scalar(0, "dV_dx_L")
+        dV_dx_R = hcl.scalar(0, "dV_dx_R")
+        dV_dx = hcl.scalar(0, "dV_dx")
+        # Variables to calculate dV_dy
+        dV_dy_L = hcl.scalar(0, "dV_dy_L")
+        dV_dy_R = hcl.scalar(0, "dV_dy_R")
+        dV_dy = hcl.scalar(0, "dV_dy")
+        # Variables to calculate dV_dtheta
+        dV_dT_L = hcl.scalar(0, "dV_dT_L")
+        dV_dT_R = hcl.scalar(0, "dV_dT_R")
+        dV_dT = hcl.scalar(0, "dV_dT")
+        # Variables to keep track of dynamics
+        dx_dt = hcl.scalar(0,"dx_dt")
+        dy_dt = hcl.scalar(0,"dy_dt")
+        dtheta_dt = hcl.scalar(0,"dtheta_dt")
+
         with hcl.for_(0, V_init.shape[0] + 1, name="i") as i: # Plus 1 as for loop count stops at V_init.shape[0]
             with hcl.for_(0, V_init.shape[1] + 1, name="j") as j:
                 with hcl.for_(0, V_init.shape[2] + 1, name="k") as k:
-                    # Calculate dV_dx
-                    dV_dx_L = hcl.scalar(0, "dV_dx_L")
-                    dV_dx_R = hcl.scalar(0, "dV_dx_R")
-                    dV_dx   = hcl.scalar(0, "dV_dx")
-
-                    # Calculate dV_dy
-                    dV_dy_L = hcl.scalar(0, "dV_dy_L")
-                    dV_dy_R = hcl.scalar(0, "dV_dy_R")
-                    dV_dy   = hcl.scalar(0, "dV_dy")
-
-                    # Calculate dV_dtheta
-                    dV_dT_L = hcl.scalar(0, "dV_dT_L")
-                    dV_dT_R = hcl.scalar(0, "dV_dT_R")
-                    dV_dT   = hcl.scalar(0, "dV_dT")
-
                     dV_dx_L[0], dV_dx_R[0] = spa_derivX(i, j, k)
                     dV_dy_L[0], dV_dy_R[0] = spa_derivY(i, j, k)
                     dV_dT_L[0], dV_dT_R[0] = spa_derivT(i, j, k)
@@ -154,11 +145,32 @@ def HJ_PDE_solver(V_new, V_init, thetas, dx):
                     with hcl.if_(dV_dT > 0):
                         uOpt.v = -uOpt.v
 
+                    # Calculate rates of change
+                    dx_dt[0] = vel.v * hcl.cos(thetas[k])
+                    dy_dt[0] = vel.v * hcl.sin(thetas[k])
+                    dtheta_dt[0] = uOpt.v
+
                     # Calculate dynamical changes
-                    V_new[i, j, k] =  vel.v * hcl.cos(thetas[k]) * dV_dx[0] + vel.v * hcl.sin(thetas[k]) * dV_dy[0] + uOpt.v * dV_dT[0]
+                    V_new[i, j, k] =  -(dx_dt[0] * dV_dx[0] + dy_dt * dV_dy[0] + dtheta_dt[0] * dV_dT[0])
+
+
+
+                    # Calculate dissipation step
+                    dx_dt[0] = my_abs(dx_dt[0])
+                    dy_dt[0] = my_abs(dy_dt[0])
+                    dtheta_dt[0] = my_abs(dtheta_dt[0])
+                    diss = hcl.scalar(0, "diss")
+                    diss[0] = 0.5*((dV_dx_R[0] - dV_dx_L[0])*dx_dt[0] + (dV_dy_R[0] - dV_dy_L[0])*dy_dt[0] + (dV_dT_R[0] - dV_dT_L[0])* dtheta_dt[0])
+                    V_new[i, j, k] = -(V_new[i, j, k] - diss[0])
+
+    # Calculating step bound and deltaT
+    delta_T  = hcl.compute((1,), )
+    #return delta_T
+
 
 def main():
     hcl.init()
+    hcl.config.init_dtype = hcl.Float()
     V_f = hcl.placeholder((50, 50, 50), name="V_f", dtype = hcl.Float())
     V_init = hcl.placeholder((50, 50, 50), name="V_init", dtype=hcl.Float())
     thetas = hcl.placeholder((50,), name="thetas", dtype=hcl.Float())
