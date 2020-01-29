@@ -117,9 +117,9 @@ def HJ_PDE_solver(V_new, V_init, thetas, t):
 
     # Calculate Hamiltonian for every grid point in V_init
     with hcl.Stage("Hamiltonian"):
-        with hcl.for_(0, V_init.shape[0], name="k") as i: # Plus 1 as for loop count stops at V_init.shape[0]
+        with hcl.for_(0, V_init.shape[0], name="i") as i: # Plus 1 as for loop count stops at V_init.shape[0]
             with hcl.for_(0, V_init.shape[1], name="j") as j:
-                with hcl.for_(0, V_init.shape[2], name="i") as k:
+                with hcl.for_(0, V_init.shape[2], name="k") as k:
                     # Variables to calculate dV_dx
                     dV_dx_L = hcl.scalar(0, "dV_dx_L")
                     dV_dx_R = hcl.scalar(0, "dV_dx_R")
