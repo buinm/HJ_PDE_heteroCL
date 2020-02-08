@@ -246,10 +246,9 @@ def HJ_PDE_solver(V_new, V_init, thetas ,t):
 def main():
     hcl.init()
     hcl.config.init_dtype = hcl.Float()
-    V_f = hcl.placeholder((100, 100, 100), name="V_f", dtype = hcl.Float())
-    #probe = hcl.placeholder((100, 100, 100), name="V_f", dtype=hcl.Float())
-    V_init = hcl.placeholder((100, 100, 100), name="V_init", dtype=hcl.Float())
-    thetas = hcl.placeholder((100,), name="thetas", dtype=hcl.Float())
+    V_f = hcl.placeholder(tuple(g.pts_each_dim), name="V_f", dtype = hcl.Float())
+    V_init = hcl.placeholder(tuple(g.pts_each_dim), name="V_init", dtype=hcl.Float())
+    thetas = hcl.placeholder((g.pts_each_dim[2],), name="thetas", dtype=hcl.Float())
     t = hcl.placeholder((1,), name="t", dtype=hcl.Float())
 
     # Create schedule
@@ -285,12 +284,13 @@ def main():
 
     # Prepare numpy array for graph computation
     V_0 = hcl.asarray(shape)
-    V_1=  hcl.asarray(np.random.rand(100,100,100))
+    V_1=  hcl.asarray(np.zeros(tuple(g.pts_each_dim)))
+
 
     t_minh = hcl.asarray(np.zeros(1))
 
     # List thetas
-    list_theta = np.reshape(g.vs[2], 100)
+    list_theta = np.reshape(g.vs[2], g.pts_each_dim[2])
     list_theta = hcl.asarray(list_theta)
 
 
@@ -307,7 +307,7 @@ def main():
         print("Look back time is (s): {:.5f}".format(lookback_time))
 
         # Run the execution and pass input into graph
-        solve_pde(V_1, V_0, list_theta,t_minh)
+        solve_pde(V_1, V_0, list_theta, t_minh)
 
         if lookback_time != 0: # Exclude first time of the computation
             execution_time += time.time() - start
