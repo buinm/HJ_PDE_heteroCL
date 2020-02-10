@@ -2,53 +2,10 @@ import heterocl as hcl
 import numpy as np
 import time
 import plotly.graph_objects as go
-
+from GridProcessing import *
+from ShapesFunctions import *
 
 import math
-
-# TODO: Move grid and CyclinderShape to another file
-
-class grid:
-  def __init__(self, min, max, dims ,pts_each_dim, pDim):
-        self.max = max
-        self.min = min
-        self.dims = dims
-        self.pts_each_dim = pts_each_dim
-        self.pDim = pDim
-
-        # Make some modifications to the initialized
-        self.max[pDim] = self.min[pDim] + (self.max[pDim] - self.min[pDim])  * (1 - 1/self.pts_each_dim[pDim])
-        self.dx = (self.max - self.min) / (self.pts_each_dim - 1.0)
-
-        """
-        Below is re-shaping the self.vs so that we can make use of broadcasting
-        self.vs[i] is reshape into (1,1, ... , pts_each_dim[i], ..., 1) such that pts_each_dim[i] is used in ith position
-        """
-        self.vs = []
-        for i in range(0,dims):
-            tmp = np.linspace(self.min[i],self.max[i], num=self.pts_each_dim[i])
-            broadcast_map = np.ones(self.dims, dtype=int)
-            broadcast_map[i] = self.pts_each_dim[i]
-            tmp = np.reshape(tmp, tuple(broadcast_map))
-            self.vs.append(tmp)
-
-        # Turn pts_each_dim to complex numbers
-        complex_x = complex(0, pts_each_dim[0])
-        complex_y = complex(0, pts_each_dim[1])
-        complex_z = complex(0, pts_each_dim[2])
-        # Grid 's meshgrid
-        self.mg_X, self.mg_Y, self.mg_T = np.mgrid[self.min[0]:self.max[0]: complex_x, self.min[1]:self.max[1]: complex_y, self.min[2]:self.max[2]: complex_z]
-
-# This functino creates a cyclinderical shape
-def CyclinderShape(grid, ignore_dim, center, radius):
-    data = np.zeros(grid.pts_each_dim)
-
-    for i in range (0, 3):
-        if i != ignore_dim-1:
-            # This works because of broadcasting
-            data = data + np.power(grid.vs[i] - center[i],  2)
-    data = np.sqrt(data) - radius
-    return data
 
 """ USER INTERFACES
 - Define grid
@@ -57,15 +14,27 @@ def CyclinderShape(grid, ignore_dim, center, radius):
 
 - Time length for computations
 
+- Run
 """
+
+# Create a grid
 g = grid(np.array([-5.0, -5.0, -math.pi]), np.array([5.0, 5.0, math.pi]), 3 ,np.array([100,100,100]), 2)
+# Use the grid to initialize initial value function
 shape = CyclinderShape(g, 3, np.zeros(3), 1)
 
-# Look-back time step and time length
+# Look-back lenght and time step
 lookback_length = 1.00
 t_step = 0.05
 
 
+# Custom function
+def my_abs(my_x):
+    abs_value = hcl.scalar(0, "abs_value", dtype=hcl.Float())
+    with hcl.if_(my_x > 0):
+        abs_value.v = my_x
+    with hcl.else_():
+        abs_value.v = -my_x
+    return abs_value[0]
 
 def HJ_PDE_solver(V_new, V_init, thetas ,t):
     # Used for calculating time bound
@@ -77,15 +46,6 @@ def HJ_PDE_solver(V_new, V_init, thetas ,t):
     max_alpha3 = hcl.scalar(-1e9, "max_alpha3")
 
     #def dynamics():
-
-    # Custom function
-    def my_abs(my_x):
-        abs_value = hcl.scalar(0, "abs_value", dtype=hcl.Float())
-        with hcl.if_(my_x > 0):
-            abs_value.v = my_x
-        with hcl.else_():
-            abs_value.v = -my_x
-        return abs_value[0]
 
     def my_sign(x):
         sign = hcl.scalar(0, "sign", dtype=hcl.Float())
@@ -259,8 +219,8 @@ def main():
     # Accessing the hamiltonian stage
     s_H = HJ_PDE_solver.Hamiltonian
     # Split the loops
-    k_out, k_in = s[s_H].split(s_H.k, 5) # These numbers are experimental, changable
-    j_out, j_in = s[s_H].split(s_H.j, 4)
+    k_out, k_in = s[s_H].split(s_H.k, 10) # These numbers are experimental, changable
+    j_out, j_in = s[s_H].split(s_H.j, 10)
     i_out, i_in = s[s_H].split(s_H.i, 10)
 
     # Reorder the loops
@@ -278,8 +238,11 @@ def main():
     # Inspect IR
     #print(hcl.lower(s))
 
-    # Build the code - CPU Back end
+    # Build the code - VHLS code returned
+    solve_pde = hcl.build(s, target="vhls")
+    print(solve_pde)
     solve_pde = hcl.build(s)
+
     #print(f)
 
     # Prepare numpy array for graph computation
@@ -304,7 +267,7 @@ def main():
         start = time.time()
 
         # Printing some info
-        print("Look back time is (s): {:.5f}".format(lookback_time))
+        #print("Look back time is (s): {:.5f}".format(lookback_time))
 
         # Run the execution and pass input into graph
         solve_pde(V_1, V_0, list_theta, t_minh)
@@ -314,8 +277,8 @@ def main():
         lookback_time += np.asscalar(t_minh.asnumpy())
 
         # Some information printing
-        print(t_minh)
-        print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
+        #print(t_minh)
+        #print("Computational time to integrate (s): {:.5f}".format(time.time() - start))
 
     # Swap array for easier visualization compared to MATLAB
 
@@ -327,8 +290,8 @@ def main():
     #probe = np.swapaxes(probe, 1, 2)
     #print(V)
     V_1 = V_1.asnumpy()
-    print("Total kernel time (s): {:.5f}".format(execution_time))
-    print("Finished solving\n")
+    #print("Total kernel time (s): {:.5f}".format(execution_time))
+    #print("Finished solving\n")
 
 
     # Plotting function
